@@ -1,0 +1,357 @@
+//// viewport 横幅設定
+//// 全画面共通値　ここを設定
+//var VP_B_MIN = 321;
+//var VP_B_MAX = 705;
+//
+//var CONTENT_A = null;
+
+var loginCookies = new ReadCookie();
+
+jQuery(function($) {
+	// スマホ用CSS強制適用
+	forceSmaphoCSS();
+
+	// 名前表示
+	if(location.protocol === 'https:' && name !== ''){
+		$('header .nameArea').html('ようこそ、' + name + 'さん');
+	}else{
+		$('header .nameArea').html('ようこそ');
+	}
+
+	// パラメータ取得
+	if(typeof(stay) !== "undefined"){
+		var param = stay.split(",")
+		// グローバルナビ確認
+		var naviDom = $("#globalNavi");
+		if(naviDom.size() > 0){
+			// グローバルナビ初期化
+			$("#globalNavi ul li a").removeClass("cur");
+
+			// グローバルナビ　カレント切り替え
+			switch (param[0]){
+				case "Home":
+					// ホーム
+					naviDom = $("#naviHomeStay a");
+					break;
+				case "Shokugaku":
+					// 職業・学問
+					naviDom = $("#naviShokugaku a");
+					break;
+				case "Daigaku":
+					// 大学情報
+					naviDom = $("#naviDaigaku a");
+					break;
+				case "Nyushi":
+					// 入試情報
+					naviDom = $("#naviNyushi a");
+					break;
+				case "Gakushu":
+					// 学習・模試
+					naviDom = $("#naviGakushu a");
+					break;
+				case "Kuchikomi":
+					// 先輩の声
+					naviDom = $("#naviKuchikomi a");
+					break;
+				default:
+					naviDom = null;
+					break;
+			}
+			if(naviDom !== null){
+				naviDom.addClass("cur");
+			}
+		}
+
+		// マイページメニュー確認
+		var myPageDom = $("#MPN");
+		if(myPageDom.size() > 0){
+			// マイページメニュー初期化
+			$("#MPN ul li a").removeClass("cur");
+
+			// マイページメニュー　カレント切り替え
+			switch (param[1]){
+				case "MpTop":
+					// マイページトップ
+					myPageDom = $("#naviMypageTopStay a");
+					break;
+				case "MpBunri":
+					// 文理選択
+					myPageDom = $("#naviMypageBunri a");
+					break;
+				case "MpWork":
+					// 気になる職業
+					myPageDom = $("#naviMypageWork a");
+					break;
+				case "MpLearning":
+					// 気になる学問
+					myPageDom = $("#naviMypageLearning a");
+					break;
+				case "MpUniversity":
+					// 気になる大学
+					myPageDom = $("#naviMypageUniversity a");
+					break;
+				case "MpExamination":
+					// ベネッセの模試
+					myPageDom = $("#naviMypageExamination a");
+					break;
+				case "MpStudy":
+					// お気に入り勉強法
+					myPageDom = $("#naviMypageStudy a");
+					break;
+				default:
+					myPageDom = null;
+					break;
+			}
+			if(myPageDom !== null){
+				myPageDom.addClass("cur");
+			}
+		}
+	}
+});
+
+//サイト内検索フォーカス
+function setFocus(elm) {
+	elm._defaultValue = elm.value;
+	elm.value = '';
+	elm.onblur = function() {
+		if( elm.value === '' ) {
+			elm.value = elm._defaultValue;
+		}
+	}
+	elm.onfocus = function() {
+		if( elm.value === elm._defaultValue ) {
+			elm.value = '';
+		}
+	}
+}
+
+//国公立・私立大学の資料請求リストの数
+var GlobalEntryUnivCookies = {
+	univData : [],
+
+	wait : function(){
+		var interval = setInterval(function(){
+			try{
+				if( jQuery('#univEntry').size() || jQuery('#univEntrySmp').size() || jQuery('#publicUnivEntry').size() ){
+					clearInterval(interval);
+					GlobalEntryUnivCookies.init();
+				}
+			}catch(e){
+
+			}
+
+		},500);
+	},
+
+	init : function(){
+		GlobalEntryUnivCookies.setCookiesUnivData();
+		setInterval(GlobalEntryUnivCookies.cookieTimer, 3000);
+
+	},
+
+	getCookiesData : function(){
+		var cookies;
+		var arr = null;
+
+		if(cookies = document.cookie){
+			cookies = cookies.split(';');
+			for(var i=0, ix=cookies.length; i < ix; i++){
+				if(/manabi-shiryolist\=/.test(cookies[i])){
+					var key = cookies[i].split('=')[1];
+					key = key.replace(/"/g,'');
+					arr = key.split("_");
+					break;
+				}
+			}
+		}
+		return arr;
+	},
+
+	getSgCookiesData : function(){
+		var cookies;
+		var arr = null;
+
+		if(cookies = document.cookie){
+			cookies = cookies.split(';');
+			for(var i=0, ix=cookies.length; i < ix; i++){
+				if(/manabi-sg-shiryolist\=/.test(cookies[i])){
+					var key = cookies[i].split('=')[1];
+					key = key.replace(/"/g,'');
+					arr = key.split("_");
+					break;
+				}
+			}
+		}
+		return arr;
+	},
+
+	setCookiesUnivData : function(){
+		if(this.getCookiesData() != null || this.getSgCookiesData() != null){
+			var daraArr = this.getCookiesData();
+			var daraSgArr = this.getSgCookiesData();
+			var publicUniv = 0;
+			var privateUniv = 0;
+			var univDataAdd = 0;
+			var senmon = 0;
+
+			if(!daraArr){
+				daraArr = [];
+			}
+
+			for(var i=0; i<daraArr.length; i++){
+				var data = daraArr[i].split("|");
+
+				var id = data[0].charAt(0);
+				if(id == "1" || id == "2" || id == "5"){
+					publicUniv += 1;
+				}else if(id == "3" || id == "4" || id == "6" || id == "7" || id == "8" || id == "9"){
+					privateUniv += 1;
+				}
+			}
+
+			if(daraSgArr){
+				senmon = daraSgArr.length;
+			}
+
+			this.univData[0] = publicUniv;
+			this.univData[1] = privateUniv;
+			this.univDataAdd = publicUniv + privateUniv + senmon;
+
+			//一般版globalHeader用(PC用)
+			if (jQuery('#univEntry').size()){
+				jQuery('#univEntry').html(this.univDataAdd);
+			}
+
+			//一般版globalHeader用(スマホ用)
+			if (jQuery('#univEntrySmp').size()){
+				jQuery('#univEntrySmp').html(this.univDataAdd);
+			}
+
+			//ゼミ版globalHeader用
+			if (jQuery('#privateUnivEntry').size()){
+				jQuery('#publicUnivEntry').html(this.univData[0] + "件");
+				jQuery('#privateUnivEntry').html(this.univData[1] + "件");
+			}
+
+			if (jQuery('#univEntry02').size()){
+			//大学情報TOP用
+				jQuery('#univEntry02').html(this.univDataAdd);
+			}
+
+			if (jQuery('#privateUnivEntry02').size()){
+			//大学情報TOP用
+				jQuery('#publicUnivEntry02').html(this.univData[0] + "件");
+				jQuery('#privateUnivEntry02').html(this.univData[1] + "件");
+			}
+		}else{
+			//一般版globalHeader用(PC用)
+			if (jQuery('#univEntry').size()){
+				jQuery('#nwSearchForm ul li a span#univEntry.num').hide();
+			}
+
+			//一般版globalHeader用(スマホ用)
+			if (jQuery('#univEntrySmp').size()){
+				jQuery('span#univEntrySmp.num ').hide();
+			}
+
+			//ゼミ版globalHeader用
+			if (jQuery('#privateUnivEntry').size()){
+				jQuery('#publicUnivEntry').html("0件");
+				jQuery('#privateUnivEntry').html("0件");
+			}
+
+			if (jQuery('#univEntry02').size()){
+			//大学情報TOP用
+				jQuery('#univEntry02').html("0");
+			}
+
+			if (jQuery('#privateUnivEntry02').size()){
+			//大学情報TOP用
+				jQuery('#publicUnivEntry02').html("0件");
+				jQuery('#privateUnivEntry02').html("0件");
+			}
+		}
+	},
+
+	cookieTimer : function(){
+		GlobalEntryUnivCookies.setCookiesUnivData();
+	},
+
+	getUnivData : function(){
+		return this.univData;
+	},
+
+	shiryoLinkClickHandler : function(urlString){
+		window.open(urlString, "shiryoSeikyuListWindow");
+	}
+}
+
+GlobalEntryUnivCookies.wait();
+
+function setFocus(elm) {
+	elm._defaultValue = elm.value;
+	elm.value = '';
+	elm.onblur = function() {
+		if( elm.value === '' ) {
+			elm.value = elm._defaultValue;
+		}
+	}
+	elm.onfocus = function() {
+		if( elm.value === elm._defaultValue ) {
+			elm.value = '';
+		}
+	}
+}
+
+function ReadCookie() {
+  var rowCookies = document.cookie.split('; ');  // Cookie文字列を '; ' で分割
+  for( var i=0; i < rowCookies.length; i++ ) {
+    var values = rowCookies[i].split('=')  // 個々の Cookie要素を '=' で分割
+    var key = values[0];
+    values.shift();
+    this[key] = unescape(values.join('='));  // Cookieの値自体に '=' が含まれていた場合の対応
+    }
+}
+
+// スマホ用CSS強制適用
+function forceSmaphoCSS(){
+	// Android未対応！
+	// $.browser.android = /android/.test(navigator.userAgent.toLowerCase());
+	// 対象はiPhoneのみ！
+	var iphone = /iphone/.test(navigator.userAgent.toLowerCase());
+//	var ipad = /ipad/.test(navigator.userAgent.toLowerCase());
+//	var ipod = /ipod/.test(navigator.userAgent.toLowerCase());
+//	var iOS = (ipod || ipad || iphone) ? true : false;
+
+	if(iphone){
+		var viewport = jQuery("meta[name=viewport]");
+		if(viewport.size()){
+			if(viewport.attr("content") !== "width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=0, maximum-scale=10"){
+				jQuery("link[media='all and (min-width : 706px),print']").attr("media", 'all and (min-width : 1706px),print');
+				jQuery("link[media='only screen and (max-width : 705px)']").attr("media", 'only screen and (max-width : 1705px)');
+				jQuery("style[media='all and (min-width : 706px),print']").attr("media", 'all and (min-width : 1706px),print');
+				jQuery("style[media='only screen and (max-width : 705px)']").attr("media", 'only screen and (max-width : 1705px)');
+
+//				CONTENT_A = viewport.attr("content");
+//				editInitialScale();
+//				jQuery(window).bind('orientationchange', editInitialScale);
+			}
+		}
+	}
+}
+
+//// viewport編集
+//function editInitialScale(){
+//	var flagLandscape = (Math.abs(window.orientation) == 90 ? true : false);
+//	var realWidth = flagLandscape ? screen.height : screen.width;
+//
+//	var content = null;
+//	if(realWidth < VP_B_MIN){
+//		content = CONTENT_A;
+//	}else if(realWidth <= VP_B_MAX){
+//		content = "width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=0, maximum-scale=10";
+//	}else{
+//		content = "width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=0, maximum-scale=10";
+//	}
+//	jQuery("meta[name=viewport]").attr("content", content);
+//}

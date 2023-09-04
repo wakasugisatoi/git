@@ -1,0 +1,249 @@
+@charset "UTF-8";
+/* common
+--------------------------------------------------*/
+.benesse-header {
+  background-color: #fff;
+  color: #000;
+  font: 12px/1.231 "Hiragino Kaku Gothic Pro", Meiryo, sans-serif;
+}
+
+.benesse-header a {
+  color: #0070cb;
+  text-decoration: underline;
+}
+
+.benesse-header__inner {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 1030px;
+  /* 950px - 12px * 2 */
+  padding: 6px 15px;
+  box-sizing: content-box;
+  *zoom: 1;
+  /* IE6,7 */
+}
+
+/* Clearfix */
+.benesse-header__inner:before,
+.benesse-header__inner:after {
+  content: "";
+  display: block;
+  overflow: hidden;
+}
+
+.benesse-header__inner:after {
+  clear: both;
+}
+
+.benesse-header__link {
+  margin: 0 0 0 -12px;
+  padding: 0;
+  list-style-type: none;
+}
+
+.benesse-header__link li {
+  display: inline;
+  margin-left: 12px;
+}
+
+.benesse-header__link a {
+  display: inline-block;
+  padding: 4px 0 4px 10px;
+  background: url("https://manabi-contents.benesse.ne.jp/noauth/_sharedZ_New/headfoot/img/icon-arrow@2x.png") left center/6px 6px no-repeat;
+  background: url("https://manabi-contents.benesse.ne.jp/noauth/_sharedZ_New/headfoot/img/icon-arrow.png") left center no-repeat\9 ;
+  /* IE7 */
+}
+
+/* benesse-header
+--------------------------------------------------*/
+.benesse-header {
+  padding-bottom: 0;
+}
+
+.benesse-header__inner {
+  padding-bottom: 0;
+}
+
+.benesse-header__logo {
+  float: left;
+  display: inline;
+  /* IE6 */
+  margin: -12px 0 0 -12px;
+  height: 30px;
+}
+
+.benesse-header__logo a {
+  display: inline-block;
+}
+
+.benesse-header__logo img {
+  display: block;
+  width: 100px;
+  height: 33px;
+  border: none;
+}
+
+.benesse-header__link {
+  float: right;
+  margin-top: -1px;
+  margin-bottom: 4px;
+  margin-left: 0;
+}
+
+@media screen and (max-width: 480px) {
+  .benesse-header__link li {
+    display: block;
+    text-align: right;
+  }
+}
+/* common (2020/3/20追加)
+--------------------------------------------------*/
+@media screen and (min-width: 706px) {
+  .hideWide {
+    display: none !important;
+  }
+}
+@media screen and (max-width: 705px) {
+  .hideNarrow {
+    display: none !important;
+  }
+}
+/* benesse-s-header(2020/3/20追加)
+--------------------------------------------------*/
+@media screen and (min-width: 706px) {
+  .benesse-s-header {
+    text-align: left;
+    background-color: #fff;
+  }
+
+  .benesse-s-header .benesse-s-header-box {
+    text-align: left;
+    width: 1030px;
+    margin: 0 auto;
+    padding: 21px 0;
+  }
+}
+@media screen and (max-width: 705px) {
+  .benesse-s-header {
+    text-align: left;
+    background-color: #fff;
+  }
+
+  .benesse-s-header .benesse-s-header-box {
+    text-align: left;
+    padding: 14px 0 14px 14px;
+  }
+}
+/* benesse-s-footer(2022/1 追加)
+--------------------------------------------------*/
+.benesse-s-footer {
+  font-family: Hiragino Kaku Gothic ProN, ヒラギノ角ゴ ProN, "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, "游ゴシック体", "Yu Gothic", YuGothic, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+  width: 100%;
+  background-color: #ffffff;
+}
+@media (max-width: 705px) {
+  .benesse-s-footer {
+    padding: 30px 0 15px;
+  }
+}
+@media (min-width: 706px) {
+  .benesse-s-footer {
+    padding: 27px 0 26px;
+  }
+}
+.benesse-s-footer a {
+  color: #333;
+}
+@media (max-width: 705px) {
+  .benesse-s-footer .benesse-s-footer-inner {
+    text-align: center;
+  }
+}
+@media (min-width: 706px) {
+  .benesse-s-footer .benesse-s-footer-inner {
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 0 10px;
+    text-align: left;
+  }
+}
+@media (min-width: 706px) {
+  .benesse-s-footer .benesse-s-footer-upper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+.benesse-s-footer .benesse-s-footer-logo {
+  display: inline-block;
+}
+@media (max-width: 705px) {
+  .benesse-s-footer .benesse-s-footer-logo {
+    width: 160px;
+  }
+}
+@media (min-width: 706px) {
+  .benesse-s-footer .benesse-s-footer-logo {
+    width: 150px;
+  }
+}
+.benesse-s-footer .benesse-s-footer-logo img {
+  width: 100%;
+  height: auto;
+}
+.benesse-s-footer .benesse-s-footer-list {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #333333;
+}
+@media (max-width: 705px) {
+  .benesse-s-footer .benesse-s-footer-list {
+    margin-top: 18px;
+    justify-content: center;
+  }
+}
+.benesse-s-footer .benesse-s-footer-list li + li {
+  line-height: 1;
+  margin-left: 20px;
+  padding-left: 20px;
+  border-left: 1px solid #333333;
+}
+.benesse-s-footer .benesse-s-footer-list a {
+  text-decoration: none;
+}
+@media (max-width: 705px) {
+  .benesse-s-footer .benesse-s-footer-list a {
+    font-size: 12px;
+  }
+}
+@media (min-width: 706px) {
+  .benesse-s-footer .benesse-s-footer-list a {
+    font-size: 14px;
+  }
+}
+@media (min-width: 706px) {
+  .benesse-s-footer .benesse-s-footer-list a:hover {
+    color: #009DFF;
+    text-decoration: underline;
+  }
+}
+.benesse-s-footer .benesse-s-footer-copyright {
+  display: block;
+  font-family: "Roboto", sans-serif;
+}
+@media (max-width: 705px) {
+  .benesse-s-footer .benesse-s-footer-copyright {
+    font-size: 10px;
+    color: #BBBBBB;
+    margin-top: 25px;
+  }
+}
+@media (min-width: 706px) {
+  .benesse-s-footer .benesse-s-footer-copyright {
+    color: #333333;
+    font-size: 12px;
+    margin-top: 16px;
+  }
+}

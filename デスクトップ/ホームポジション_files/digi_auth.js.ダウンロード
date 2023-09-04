@@ -1,0 +1,165 @@
+function isSp_digi() {
+	var userAgent = navigator.userAgent;
+
+	if ((userAgent.indexOf('iPhone') > 0 && userAgent.indexOf('iPad') === -1)
+			|| userAgent.indexOf('iPod') > 0
+			|| (userAgent.indexOf('Android') > 0 && userAgent.indexOf('Mobile') > 0)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function getDigiPsv() {
+	var digiPsvMap = new Object();
+	digiPsvMap['loginId'] = null;
+	digiPsvMap['psv_key'] = null;
+
+	var psvCookieValue = getCookieValue(document.cookie + ";", 'psv');
+	if (psvCookieValue !== '') {
+		var decodePsvCookieValue = decodeBase64(decodeURIComponent(psvCookieValue));
+		var psvItems = decodePsvCookieValue.split('::');
+
+		if (psvItems.length === 2) {
+			var passSaveItems = psvItems[1].split(',');
+
+			if (passSaveItems.length > 0) {
+				for (var i = 0; i < passSaveItems.length; i++) {
+					var passSaveDetailItems = passSaveItems[i].split(':');
+
+					if (passSaveDetailItems.length === 4) {
+						var loginId = passSaveDetailItems[0];
+						var psvSiteId = passSaveDetailItems[1];
+						var psvKey = passSaveDetailItems[2].trim();
+
+						if (loginId.match(/^SASSI\d{10}$/) && psvSiteId === 'kdm' && psvKey !== '') {
+							digiPsvMap['loginId'] = loginId;
+							digiPsvMap['psv_key'] = psvKey;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return digiPsvMap;
+}
+
+function deleteDigiPsv(login_url, usr_name, psv_key) {
+	if ((login_url != null && login_url.indexOf('/pslogin') > 0)
+		&& (usr_name != null && usr_name.match(/^SASSI\d{10}$/))
+		&& (psv_key != null && psv_key !== '')) {
+		return;
+	}
+
+	var key = 'psv';
+	var psvCookieValue = getCookieValue(document.cookie + ";", key);
+
+	if (psvCookieValue !== '') {
+		var decodePsvCookieValue = decodeBase64(decodeURIComponent(psvCookieValue));
+		var psvItems = decodePsvCookieValue.split('::');
+
+		if (psvItems.length === 2) {
+			var newPassSaveValue = '';
+
+			var passSaveItems = psvItems[1].split(',');
+
+			if (passSaveItems.length > 0) {
+				for (var i = 0; i < passSaveItems.length; i++) {
+					var passSaveDetailItems = passSaveItems[i].split(':');
+
+					if (passSaveDetailItems.length === 4) {
+						var loginId = passSaveDetailItems[0];
+						var psvSiteId = passSaveDetailItems[1];
+						var psvKey = passSaveDetailItems[2].trim();
+
+						if (!(loginId.match(/^SASSI\d{10}$/) && psvSiteId === 'kdm' && psvKey !== '')) {
+							newPassSaveValue = newPassSaveValue + passSaveItems[i] + ',';
+						}
+					}
+				}
+			}
+
+			if (newPassSaveValue === '') {
+				document.cookie = key + '=; expires=' + new Date('1970/01/01 00:00:00').toGMTString()
+									+ '; domain=.benesse.ne.jp; path=/;';
+			} else {
+				var newPsvCookieValue = encodeURIComponent(encodeBase64(psvItems[0] + '::' + newPassSaveValue));
+				document.cookie = key + '=' + newPsvCookieValue + '; expires=' + new Date('2038/01/01 00:00:00').toGMTString()
+									+ '; domain=.benesse.ne.jp; path=/;';
+			}
+		}
+	}
+}
+
+function setDigiAutologin(psvflag) {
+	var key = 'digi_autologin';
+
+	if (psvflag === '1') {
+		document.cookie = key + '=true; expires=' + new Date('2038/01/01 00:00:00').toGMTString()
+							+ '; domain=.benesse.ne.jp; path=/;';
+	} else {
+		document.cookie = key + '=; expires=' + new Date('1970/01/01 00:00:00').toGMTString()
+							+ '; domain=.benesse.ne.jp; path=/;';
+	}
+}
+
+function decodeBase64(str) {
+
+	var base64list = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+	var decStr = "";
+	var p = -8, a = 0, c, d;
+
+	for (var i = 0; i < str.length; i++) {
+		if ((c = base64list.indexOf(str.charAt(i))) < 0)
+			continue;
+		a = (a << 6) | (c & 63);
+		if ((p += 6) >= 0) {
+			d = (a >> p) & 255;
+			if (c != 64)
+				decStr += String.fromCharCode(d);
+			a &= 63;
+			p -= 8;
+		}
+	}
+	return decStr;
+}
+
+function encodeBase64(str) {
+
+	var base64list = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+	var encStr = "";
+	var p = -6, a = 0, i = 0, v = 0, c;
+
+	while ((i < str.length) || (p > -6)) {
+		if (p < 0) {
+			if (i < str.length) {
+				c = str.charCodeAt(i++);
+				v += 8;
+			} else {
+				c = 0;
+			}
+			a = ((a & 255) << 8) | (c & 255);
+			p += 8;
+		}
+		encStr += base64list.charAt((v > 0) ? (a >> p) & 63 : 64)
+		p -= 6;
+		v -= 6;
+	}
+	return encStr;
+
+}
+
+function getCookieValue(cStr, cKey) {
+	var cKeyEq = cKey + "=";
+	var ca = cStr.split(';');
+	for (var i = 0; i < ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0) == ' ')
+			c = c.substring(1, c.length);
+		if (c.indexOf(cKeyEq) == 0)
+			return c.substring(cKeyEq.length, c.length);
+	}
+	return "";
+}

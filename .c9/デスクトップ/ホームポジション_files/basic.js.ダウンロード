@@ -1,0 +1,223 @@
+var nativeAddEventListenerObj = window.addEventListener;
+if (!nativeAddEventListenerObj) {
+    nativeAddEventListenerObj = window.attachEvent;
+}
+
+/* userAgent設定
+------------------------------------------------------------*/
+
+var nUa=navigator.userAgent;
+
+var nUaIE=nUa.indexOf('MSIE')!=-1;//ie
+var nUaIE6=nUa.indexOf('MSIE 6')!=-1;//ie6
+var nUaIE7=nUa.indexOf('MSIE 7')!=-1;//ie7
+var nUaIE8=nUa.indexOf('MSIE 8')!=-1;//ie8
+var nUaIE9=nUa.indexOf('MSIE 9')!=-1;//ie9
+var nUaIE11=nUa.indexOf('Trident/7')!=-1;//ie11
+var nUaEdge=nUa.indexOf('Edge')!=-1;//Edge
+
+var nUaIPh=nUa.indexOf('iPhone; ')!=-1;//iPhone
+var nUaIPa=(nUa.indexOf('iPad; U; CPU OS ')!=-1 || nUa.indexOf('iPad; CPU OS')!=-1); //iPad
+var nUaIPo=(nUa.indexOf('iPod;')!=-1 || nUa.indexOf('iPod touch;')!=-1);  //iPod
+var nUaAnd=(nUa.indexOf('Linux; U; Android ')!=-1 || nUa.indexOf('Linux; Android ')!=-1); //Android
+
+var nUaDocomo=nUa.toLowerCase().indexOf('docomo')!=-1;//docomo
+var nUaAu=nUa.toLowerCase().indexOf('kddi')!=-1;//au
+var nUaSb=nUa.toLowerCase().indexOf('softbank')!=-1;//softbank
+
+var nUaOp=nUa.toLowerCase().indexOf('opera')!=-1;//Opera
+
+var nNobunagaSp = (navigator.userAgent.match(/(iPhone|Android.*Mobile)/) ? true : false);
+
+if(nUaIPh||nUaIPa||nUaIPo||nUaAnd||nNobunagaSp){
+	var nUaSmp=1;//smartPhone
+}
+
+var nUaNarrow;
+var nUaWide;
+
+jQuery(function() {
+	var mqImg=jQuery('#mqImg').css('display');
+	if(mqImg=='none'){
+		nUaNarrow=1;//幅狭
+	}else{
+		nUaWide=1;//幅広
+	}
+});
+
+
+/* 幅狭の場合にぱんくずを下方に移動
+-------------------------------------*/
+jQuery(function() {
+	if(nUaNarrow){
+		var tgt = '#bcTgt';
+		jQuery('#breadClumb').clone().prependTo(tgt);
+		jQuery('#breadClumb').eq(0).remove();
+		jQuery("#breadClumb").show();
+	}
+});
+
+/* 幅広い場合にマウスオーバーで透過
+-------------------------------------*/
+jQuery(function() {
+	function imgOvr(tgt){
+		jQuery(tgt).hover(function(){
+		   	jQuery(this).css('opacity',0.8);
+		},function(){
+			jQuery(this).css('opacity',1);
+		});
+	}
+	
+	if(nUaWide){//対象パーツに.btnOvrを付与すれば透過します。
+		var ovrTgt=jQuery('.pageTop a,.btnA,.btnB,.btnC,.btnD,.btnReset,header .cart,#SRCH .btnSearch,.btnOvr');
+		imgOvr(ovrTgt);
+	}
+});
+
+
+/* 幅狭の場合にヘッダナビゲーションの開閉を作動
+-------------------------------------*/
+jQuery(function() {
+	if(nUaNarrow){
+	
+		jQuery('header .global a').click(function(){
+			var cur=jQuery(this).attr('class').charAt(2);
+			if(cur!=null){
+				jQuery('header nav .secondary').hide();
+				if(jQuery(this).closest('li').attr('class')=='open'){
+					jQuery('header nav .global li').removeClass('open');
+				}else{
+					jQuery('header nav .global li').removeClass('open');
+					jQuery(this).closest('li').addClass('open');
+					jQuery('header nav .secondary').eq(cur).slideDown('normal');
+				}
+			}
+		});
+		
+	}
+});
+
+/* 幅狭の場合に「続きを読む」モジュールを作動
+-------------------------------------*/
+jQuery(function() {
+	if(nUaNarrow){
+		jQuery('.continueBox .continueCont').hide();
+		jQuery('.continueBox .openClose').show();
+		jQuery('.continueBox .openClose a').click(function(){
+			if(jQuery(this).attr('class')=='open'){
+				jQuery(this).removeClass('open').addClass('close').find('.text').html('閉じる');
+				jQuery(this).closest('.continueBox').find('.continueCont').show();
+			}else{
+				jQuery(this).removeClass('close').addClass('open').find('.text').html('続きを読む');
+				jQuery(this).closest('.continueBox').find('.continueCont').hide();
+			}
+		});
+	}
+});
+
+/* 幅狭の場合に「アコーディオンボックス」モジュールを作動
+-------------------------------------*/
+jQuery(function() {
+	if(nUaNarrow){
+        jQuery(".accBox dt").click(function(){
+            jQuery(this).next("dd").slideToggle();
+            jQuery(this).toggleClass("open");
+        });
+	}
+});
+
+
+
+/* スマートフォンの場合にページ表示時にアドレスバーを非表示にする
+-------------------------------------*/
+jQuery(function() {
+	if(nUaSmp){
+		function doScroll(){if(window.pageYOffset===0){window.scrollTo(0,1);}}
+		window.addEventListener('load',function(){setTimeout(doScroll,100);},false);
+		window.onorientationchange=function(){setTimeout(doScroll,100);};
+	}
+});
+
+
+/* ヘッダ　オススメ☆　ループを作動
+-------------------------------------*/
+jQuery(function() {
+
+	var osusumeLinks=jQuery('header .osusumeInfo li');
+	var osusumeLen=osusumeLinks.size()-1;
+	
+	var osusumeH=0;
+	jQuery('header .osusumeInfo li').each(function(){
+		(osusumeH<jQuery(this).height()) ? osusumeH=jQuery(this).height() : osusumeH;
+	});
+	jQuery('header .osusumeInfo ul').css('height',osusumeH + 'px');
+	
+	var osusumeCur=0;
+	osusumeLinks.hide();
+	osusumeLinks.eq(0).show();
+	
+	setInterval(function(){
+		(osusumeCur==osusumeLen) ? osusumeCur=0 : osusumeCur++;
+		osusumeLoop(osusumeCur);
+	},4000);
+
+	function osusumeLoop(osusumeCur){
+		osusumeLinks.hide();
+		osusumeLinks.eq(osusumeCur).fadeIn('slow');
+	}
+	
+});
+
+
+/* 「タブボックス」モジュールを作動
+-------------------------------------*/
+jQuery(function() {
+
+var tabs=jQuery('.tabBox');
+var tabsLen=tabs.size();
+
+for(i=0;i<tabsLen;i++){
+	tabDisp(tabs.eq(i));
+}
+
+function tabDisp(tgt){
+	tgt.find('.tab').css('display','block');
+	var contLen=tgt.find('.tab li').size();
+	tgt.find('.tab li').css('width',100/contLen+'%');
+	tabCur(tgt,0);
+}
+function tabCur(tgt,num){
+	tgt.find('.tab li a').removeClass('cur');
+	tgt.find('.tab li a').eq(num).addClass('cur');
+	tgt.find('.tabCont').hide();
+	tgt.find('.tabCont').eq(num).show();
+}
+
+tabs.find('.tab a').click(function(){
+	tabCur(jQuery(this).closest('.tabBox'),jQuery(this).attr('class').charAt(3));
+});
+
+});
+
+/* スムーススクロール
+------------------------------------------------------------*/
+jQuery(function() {
+	jQuery('a[href*=#]').click(function() {
+		if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+			var target = jQuery(this.hash);
+			target = target.length && target;
+			if (target.length) {
+				var sclpos = 10;
+				if(window.matchMedia( "(max-width: 705px)" ).matches && !jQuery('.menuWrap').hasClass('is-scrolling')) {
+					sclpos = sclpos + jQuery('.menuWrap').innerHeight();
+				}
+				var scldurat = 1200;
+				var targetOffset = target.offset().top - sclpos;
+				jQuery('html,body').animate({scrollTop: targetOffset});
+				return false;
+			}
+		}
+	});
+});
+
+

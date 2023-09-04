@@ -1,0 +1,15 @@
+
+<!-- saved from url=(0060)https://manabi-manage.benesse.ne.jp/provide/html/getSeg.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></head><body>
+<script type="text/javascript">
+window.addEventListener('message', function(event) {
+ if (event.origin.match(/^https:\/\/manabi(|-ut|-k|-d|-d[2-5]).benesse.ne.jp$/) != null && event.data == 'getSeg') {
+  var ls = window.localStorage.getItem('dmpData');
+  var seg = ((ls) ? JSON.parse(ls).ac_segs : 
+    document.cookie.replace(/(?:(?:^|.*;\s*)segmentKey\s*\=\s*([^;]*).*$)|^.*$/, "$1"));
+    event.source.postMessage({"action": event.data, "seg" : seg}, event.origin);
+ }
+}, false);
+</script>
+<script type="text/javascript" src="./_Incapsula_Resource" async=""></script>
+</body></html>

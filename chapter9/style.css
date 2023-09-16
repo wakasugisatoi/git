@@ -1,7 +1,7 @@
 *{
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 header{
@@ -24,7 +24,7 @@ main{
   margin-right: 30px;
   padding: 10px;
   position:  relative;
-  background-color:#EEEEEE;
+  background-color:#eee;
   /*margin: 0 auto;*/
   /*float: left;*/
 }
@@ -34,7 +34,7 @@ main{
  }
 
 
-.main-img1{
+.main-img1 {
   height: 150px;
   background-image: url(./flow01.png);
   background-position: bottom;
@@ -64,13 +64,13 @@ main{
 }
 
 .main-title{
-  margin:15px 0 5px;
+  margin: 15px 0 5px;
 }
 
 footer{
   /*width: 100%;*/
   height: 50px;
-  background-color: #aaaaaa
+  background-color: #aaa;
 }
 
 @media screen and (max-width:768px){

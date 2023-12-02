@@ -1,0 +1,34 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing:border-box;
+}
+
+header{
+ width: 100%;
+ height: 20px;
+ text-align: center;
+}
+
+.nav-list{
+    width: 100%;
+    height: 30px;
+}
+
+
+.main{
+width: 100%;
+height: 900px;
+}
+
+
+
+footer{
+    width: 100%;
+    height: 120px;
+    background-color: #848282;
+}
+
+.footer-text{
+    color: #fff;
+}
